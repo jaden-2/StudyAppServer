@@ -15,7 +15,6 @@ public class StudySessionService {
 	private StudySessionRepo repo;
 	
 	public void createGroup(StudySession group) {
-	
 		repo.save(group);
 	}
 	

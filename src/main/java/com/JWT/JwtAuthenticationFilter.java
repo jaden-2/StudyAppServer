@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		this.jwtService = service;
 		this.authManager = manager;
 		
-		this.setFilterProcessesUrl("/studyApp/auth/login");
+		this.setFilterProcessesUrl("/api/studyApp/auth/login");
 	}
 	
 	@Override
@@ -52,6 +52,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		response.getWriter().write("{\n" + "\"token\":" + "\"" + token + "\"}");
 		response.getWriter().flush();
 	}
+
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException, ServletException {
+		
+		response.setContentType("application/json");
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.getWriter().write("{\"message\" : \"Bad credential\"}");
+		response.getWriter().flush();
+	}
+	
+	
 	
 
 }

@@ -1,8 +1,10 @@
 package com.JWT;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,21 +41,24 @@ public class JwtValidationFilter extends OncePerRequestFilter{
 			filterChain.doFilter(request, response);
 			return;
 		}
+		
 		// Extracts JWT token from a valid header
 		String jwtToken = header.substring(7);
-		
+	
 		String username = jwtService.extractUsername(jwtToken);
+		String claim = jwtService.extractClaim(jwtToken);
 		if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			CustomUserDetails userDetails = userService.loadUserByUsername(username);
 			
 			if(jwtService.isTokenValid(jwtToken, userDetails)) {
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null);
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, List.of(new SimpleGrantedAuthority(claim)));
 				
 				authToken.setDetails(new WebAuthenticationDetails(request));
 
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 			}
 		}
+		System.out.printf("%s user was authenticated \n", username);
 		filterChain.doFilter(request, response);
 	}
 

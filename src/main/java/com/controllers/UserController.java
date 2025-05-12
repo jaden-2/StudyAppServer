@@ -1,6 +1,6 @@
 package com.controllers;
-
 import java.net.URI;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DTO.ServerResponse;
+import com.DTO.StudySessionDTO;
 import com.DTO.UserRequest;
 import com.DTO.UserResponse;
 import com.entities.CustomUserDetails;
@@ -26,7 +27,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("/studyApp/account")
+@RequestMapping("api/studyApp/account")
 public class UserController {
 	@Autowired
 	private UserService service;
@@ -39,9 +40,9 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserResponse> createAccount(@Valid @RequestBody UserRequest newUser){
+	public ResponseEntity<ServerResponse> createAccount(@Valid @RequestBody UserRequest newUser){
 		service.createUser(newUser);
-		return ResponseEntity.created(URI.create("/login")).build();
+		return ResponseEntity.created(URI.create("/login")).body(new ServerResponse("User has been create"));
 	}
 	
 	@PutMapping
@@ -78,6 +79,9 @@ public class UserController {
 		
 		return ResponseEntity.noContent().build();
 	}
-	
+	@GetMapping(path= "/group")
+	public ResponseEntity<Set<StudySessionDTO>> getUserStudyGroups(@AuthenticationPrincipal CustomUserDetails authUser){
+		return ResponseEntity.ok(service.getGroups(authUser));
+	}
 	
 }

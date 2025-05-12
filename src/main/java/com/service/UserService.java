@@ -1,5 +1,6 @@
 package com.service;
 
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.DTO.StudySessionDTO;
 import com.DTO.UserRequest;
 import com.DTO.UserResponse;
 import com.entities.CustomUserDetails;
@@ -80,9 +82,14 @@ public class UserService {
 	 * Gets the groups an authenticated user belongs to 
 	 * @Param: UserRequest, the authenticated user principal context from spring security
 	 * @Returns: Set<StudySession>, a set of all groups the users belongs to*/
-	public Set<StudySession> getGroups(CustomUserDetails user) {
+	public Set<StudySessionDTO> getGroups(CustomUserDetails user) {
 		//unauthenticated access should not be possible
-		return repo.findByUsername(user.getUsername())
+		Set<StudySession> sessions = repo.findByUsername(user.getUsername())
 				.orElseThrow(()-> new NoSuchElementException("User does not exist")).getStudySessions();
+		
+		Set <StudySessionDTO> sessionDTOs = new HashSet<>();
+		
+		sessions.forEach((session)-> sessionDTOs.add(new StudySessionDTO(session)));
+		return sessionDTOs;
 	}
 }

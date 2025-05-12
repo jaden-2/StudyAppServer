@@ -37,7 +37,7 @@ public class User {
 	private String password;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_studySessuions", joinColumns = @JoinColumn(name = "user_id"), 
+	@JoinTable(name = "user_studySessions", joinColumns = @JoinColumn(name = "user_id"), 
 	inverseJoinColumns = @JoinColumn(name="session_id"))
 	private Set<StudySession> studySessions = new HashSet<>();
 	

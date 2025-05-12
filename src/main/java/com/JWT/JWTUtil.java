@@ -22,7 +22,7 @@ public class JWTUtil {
 	private String SECRET;
 	private SecretKey secretKey;
 	
-	private static final int jwtExpiration = 1000 * 60 * 10; // 10 minutes
+	private static final int jwtExpiration = 1000 * 60 * 60; // 60 minutes
 	
 	@PostConstruct
 	public void init() {
@@ -49,6 +49,16 @@ public class JWTUtil {
 
 	}
 	
+	public String extractClaim(String token) {
+		return Jwts.parser()
+				.verifyWith(secretKey)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload()
+				.get("role", String.class);
+				
+				
+	}
 	public boolean isTokenValid(String token, CustomUserDetails userDetails) {
 		String username = extractUsername(token);
 		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);

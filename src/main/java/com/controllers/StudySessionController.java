@@ -22,7 +22,7 @@ import com.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/studyApp/group")
+@RequestMapping("/api/studyApp/group")
 public class StudySessionController {
 	
 	@Autowired
@@ -34,12 +34,13 @@ public class StudySessionController {
 	@Autowired 
 	private UserService userService;
 	
-	private static final String brokerPath= "/studyApp/topic/";
+	private static final String brokerPath= "/sock/studyApp/topic/";
 	
 	/*
 	 * Creates a group for authenticated user, adds this group to user groups, announce that user created group*/
 	@PostMapping
-	public ResponseEntity<Void> createGroup(@AuthenticationPrincipal CustomUserDetails authUser, @Valid @RequestBody StudySessionDTO group){
+	public ResponseEntity<StudySessionDTO> createGroup(@AuthenticationPrincipal CustomUserDetails authUser, @Valid @RequestBody StudySessionDTO group){
+		
 		StudySession newGroup = new StudySession(group); // group is instantiated
 		
 		service.createGroup(newGroup);// group is created
@@ -47,8 +48,8 @@ public class StudySessionController {
 		ServerResponse message = new ServerResponse(authUser.getUsername() + " created group"); // prepares announcement
 		
 		msgTemplate.convertAndSend(brokerPath+ newGroup.getGroupId(), message); // makes announcement
-		
-		return ResponseEntity.created(URI.create("/studyApp/group/"+newGroup.getGroupId())).build();
+		System.out.println();
+		return ResponseEntity.created(URI.create("/studyApp/group/"+newGroup.getGroupId())).body(new StudySessionDTO(newGroup));
 	}
 	/*
 	 * Updates the title and description of a group*/

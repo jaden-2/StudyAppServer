@@ -23,7 +23,7 @@ public class GroupController {
 	private MessageService msgservice;
 
 	public void sendToGroup(String group, Message message) {
-		String path = "/studyApp/topic/"+ group;
+		String path = "/sock/studyApp/topic/"+ group;
 		messagingTemplate.convertAndSend(path, message);
 	}
 	
