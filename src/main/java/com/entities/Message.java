@@ -25,14 +25,14 @@ public class Message {
 	private Integer messageId;
 	
 	@ManyToOne
-	@JoinColumn(name = "username")
+	@JoinColumn(name = "userId")
 	private User sender;
 	
 	@Nonnull
 	private String content;
 	
 	@ManyToOne
-	@JoinColumn(name = "groupId")
+	@JoinColumn(name = "sessionId")
 	private StudySession group;
 	
 	private LocalDateTime createdAt;

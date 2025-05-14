@@ -1,11 +1,13 @@
 package com.configs;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -33,21 +35,20 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor{
 		if(request instanceof ServletServerHttpRequest) {
 			ServletServerHttpRequest servletServerHttpRequest = (ServletServerHttpRequest) request;
 			HttpServletRequest httpServletRequest = servletServerHttpRequest.getServletRequest();
+		
 			
-			String authHeader = httpServletRequest.getHeader("Authorization");
+			String jwtToken = httpServletRequest.getParameter("token");
 			
-			if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+			if(jwtToken == null) {
 				return false;
 			}
-			
-			String jwtToken = authHeader.substring(7);
 			String username = jwtService.extractUsername(jwtToken);
-			
-			if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			String claims = jwtService.extractClaim(jwtToken);
+			if(username != null) {
 				CustomUserDetails userDetail = userDetialsService.loadUserByUsername(username);
 				
 				if(jwtService.isTokenValid(jwtToken, userDetail)) {
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetail, null);
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetail, null, List.of(new SimpleGrantedAuthority(claims)));
 					authToken.setDetails(new WebAuthenticationDetails(httpServletRequest));
 					
 					SecurityContext context = SecurityContextHolder.createEmptyContext();

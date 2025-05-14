@@ -26,8 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 		registry.addEndpoint("ws-studyApp")
 				.setAllowedOriginPatterns("*")
 				.addInterceptors(new StompHandshakeInterceptor(jwtService, userServiceDetails))
-				.setAllowedOrigins("http://localhost:3000")
-				.withSockJS();
+				.setAllowedOrigins("http://localhost:3000");
 			
 		WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
 	}

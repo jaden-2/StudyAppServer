@@ -51,6 +51,7 @@ public class SecurityConfig {
 		.authorizeHttpRequests((request)->{
 			request.requestMatchers("/api/studyApp/auth/login").permitAll();
 			request.requestMatchers(HttpMethod.POST, "/api/studyApp/account").permitAll();
+			request.requestMatchers("/ws-studyApp").permitAll();
 			request.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 			request.anyRequest().authenticated();
 		})
