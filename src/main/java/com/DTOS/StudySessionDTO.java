@@ -1,5 +1,5 @@
-package com.DTO;
-
+package com.DTOS;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.entities.Message;
@@ -16,7 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StudySessionDTO {
 	private Integer id;
-	private List<Message> messages;
+	private String groupId;
+	private List<MessageResposeDTO> messages = new ArrayList<>();
 	
 	
 	@NotBlank(message = "Group must have title")
@@ -26,9 +27,13 @@ public class StudySessionDTO {
 	private String description;
 	
 	public StudySessionDTO(StudySession session) {
+		this.id = session.getSessionId();
+		this.groupId = session.getGroupId();
 		this.title = session.getTitle();
 		this.description = session.getDescription();
-		this.id = session.getSessionId();
-		this.messages = session.getMessages();
+		if(session.getMessages() !=null) {
+			session.getMessages().forEach((msg)->messages.add(new MessageResposeDTO(msg)));
+		}
+		
 	}
 }

@@ -11,6 +11,6 @@ import com.entities.Message;
 @Repository
 public interface MessageRepo extends JpaRepository<Message, Integer>{
 
-	Optional<List<Message>> findByGroupGroupId(String groupId);
+	Optional<List<Message>> findBySessionSessionId(Integer sessionId);
 
 }

@@ -1,9 +1,11 @@
 package com.entities;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.DTO.UserRequest;
+import com.DTOS.UserRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
@@ -17,16 +19,19 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Integer userId;
 	
 	@Nonnull
@@ -35,6 +40,9 @@ public class User {
 	
 	@Nonnull
 	private String password;
+	
+	@JsonIgnore
+	private Date passChangedAt;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_studySessions", joinColumns = @JoinColumn(name = "user_id"), 
@@ -45,5 +53,5 @@ public class User {
 		this.password = newUser.getPassword();
 		this.username = newUser.getUsername();
 	}
-
+	
 }

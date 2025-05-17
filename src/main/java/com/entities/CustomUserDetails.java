@@ -1,6 +1,8 @@
 package com.entities;
 
+
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +14,7 @@ public class CustomUserDetails implements UserDetails{
 	private String username;
 	private User user;
 	private String password;
+	private Date passChangeDate;
 	private Set<StudySession> groups;
 	
 	
@@ -19,6 +22,7 @@ public class CustomUserDetails implements UserDetails{
 		this.username = user.getUsername();
 		this.password = user.getPassword();
 		this.groups = user.getStudySessions();
+		this.passChangeDate = user.getPassChangedAt();
 		this.user = user;
 	}
 	@Override
@@ -44,5 +48,8 @@ public class CustomUserDetails implements UserDetails{
 	}
 	public User getUser() {
 		return user;
+	}
+	public Date getPassChangeDate() {
+		return passChangeDate;
 	}
 }

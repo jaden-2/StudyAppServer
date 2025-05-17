@@ -1,7 +1,11 @@
 package com.configs;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -29,6 +33,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 				.setAllowedOrigins("http://localhost:3000");
 			
 		WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
+	}
+
+	@Override
+	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+		messageConverters.add(converter);
+		return WebSocketMessageBrokerConfigurer.super.configureMessageConverters(messageConverters);
 	}
 
 	@Override

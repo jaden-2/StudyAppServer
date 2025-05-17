@@ -14,7 +14,8 @@ import jakarta.persistence.PrePersist;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.DTO.MessageDTO;
+import com.DTOS.MessageDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Data
@@ -25,15 +26,16 @@ public class Message {
 	private Integer messageId;
 	
 	@ManyToOne
-	@JoinColumn(name = "userId")
+	@JoinColumn(name = "username", referencedColumnName = "username")
 	private User sender;
 	
 	@Nonnull
 	private String content;
 	
 	@ManyToOne
-	@JoinColumn(name = "sessionId")
-	private StudySession group;
+	@JoinColumn(name = "sessionId", referencedColumnName = "sessionId")
+	@JsonIgnore
+	private StudySession session;
 	
 	private LocalDateTime createdAt;
 	
@@ -42,15 +44,15 @@ public class Message {
 		this.createdAt = LocalDateTime.now();
 	}
 	
-	public Message(User sentFrom, String content, StudySession group) {
+	public Message(User sentFrom, String content, StudySession session) {
 		this.content = content;
 		this.sender = sentFrom;
-		this.group = group;
+		this.session = session;
 	}
 	public Message(User sender, MessageDTO message) {
 		this.sender = sender;
 		this.content = message.getContent();
-		this.group = message.getGroup();
+		this.session= new StudySession(message.getSession());
 	}
 	
 }

@@ -55,13 +55,11 @@ public class JWTUtil {
 				.build()
 				.parseSignedClaims(token)
 				.getPayload()
-				.get("role", String.class);
-				
-				
+				.get("role", String.class);	
 	}
 	public boolean isTokenValid(String token, CustomUserDetails userDetails) {
 		String username = extractUsername(token);
-		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+		return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isValidAfterPassChange(token, userDetails);
 	}
 
 	private boolean isTokenExpired(String token) {
@@ -72,6 +70,16 @@ public class JWTUtil {
 				.getPayload()
 				.getExpiration()
 				.before(new Date());
+	}
+	
+	private boolean isValidAfterPassChange(String token, CustomUserDetails userDetails) {
+		return Jwts.parser()
+				.verifyWith(secretKey)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload()
+				.getIssuedAt()
+				.after(userDetails.getPassChangeDate());
 	}
 	
 }

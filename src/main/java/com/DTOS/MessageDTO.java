@@ -1,6 +1,5 @@
-package com.DTO;
+package com.DTOS;
 
-import com.entities.StudySession;
 
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotBlank;
@@ -12,8 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageDTO {
+	
 	@NotBlank(message="Can't send an empty message")
 	private String content;
 	@Nonnull
-	private StudySession group;
+	private StudySessionDTO session;
+	
+	
 }

@@ -1,5 +1,6 @@
 package com.service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -8,10 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.DTO.StudySessionDTO;
-import com.DTO.UserRequest;
-import com.DTO.UserResponse;
+import com.DTOS.StudySessionDTO;
+import com.DTOS.UserRequest;
+import com.DTOS.UserResponse;
 import com.entities.CustomUserDetails;
+import com.entities.Message;
 import com.entities.StudySession;
 import com.entities.User;
 import com.repository.UserRepo;
@@ -31,11 +33,16 @@ public class UserService {
 	public void createUser(UserRequest newUser) {
 		User user = new User(newUser);
 		user.setPassword(encoder.encode(user.getPassword()));
+		user.setPassChangedAt(new Date());
 		repo.save(user);
 	}
 	
 	public UserResponse getUser(CustomUserDetails authenticatedUser) {
 		return new UserResponse(authenticatedUser);
+	}
+	
+	public User getUser(String username) {
+		return repo.findByUsername(username).orElseThrow();
 	}
 	
 	/*
@@ -49,7 +56,7 @@ public class UserService {
 		
 		user.setUsername(updatedUser.getUsername());
 		user.setPassword(encoder.encode(updatedUser.getPassword()));
-		
+		user.setPassChangedAt(new Date());
 		repo.save(user);
 		
 	}
@@ -63,12 +70,12 @@ public class UserService {
 	/*
 	 * Users joins existing StudySessions
 	 * */
-	public StudySession joinGroup(CustomUserDetails authenticatedUser, StudySession group) {
+	public StudySessionDTO joinGroup(CustomUserDetails authenticatedUser, StudySession group) {
 		User user = repo.findByUsername(authenticatedUser.getUsername()).orElseThrow();
 		user.getStudySessions().add(group);
 		
 		repo.save(user);
-		return group;
+		return new StudySessionDTO(group);
 	}
 	
 	/*Leave an existing group*/
@@ -92,4 +99,11 @@ public class UserService {
 		sessions.forEach((session)-> sessionDTOs.add(new StudySessionDTO(session)));
 		return sessionDTOs;
 	}
+
+
+	public User getByUsername(String name) {
+		return repo.findByUsername(name).orElseThrow();
+	}
+	
+	
 }

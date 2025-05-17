@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DTO.ServerResponse;
-import com.DTO.StudySessionDTO;
+import com.DTOS.MessageResposeDTO;
+import com.DTOS.ServerResponse;
+import com.DTOS.StudySessionDTO;
 import com.entities.CustomUserDetails;
 import com.entities.StudySession;
 import com.service.StudySessionService;
@@ -36,6 +39,11 @@ public class StudySessionController {
 	
 	private static final String brokerPath= "/sock/studyApp/topic/";
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<StudySessionDTO> getGroup(@PathVariable Integer id){
+		return ResponseEntity.ok(new StudySessionDTO(service.getSession(id)));
+	}
+	
 	/*
 	 * Creates a group for authenticated user, adds this group to user groups, announce that user created group*/
 	@PostMapping
@@ -45,10 +53,10 @@ public class StudySessionController {
 		
 		service.createGroup(newGroup);// group is created
 		userService.joinGroup(authUser, newGroup);// group is added to user's list of groups
-		ServerResponse message = new ServerResponse(authUser.getUsername() + " created group"); // prepares announcement
+		MessageResposeDTO message = UserController.createServerMessage(authUser.getUsername(), "created group"); // prepares announcement
 		
 		msgTemplate.convertAndSend(brokerPath+ newGroup.getGroupId(), message); // makes announcement
-		System.out.println();
+		
 		return ResponseEntity.created(URI.create("/studyApp/group/"+newGroup.getGroupId())).body(new StudySessionDTO(newGroup));
 	}
 	/*

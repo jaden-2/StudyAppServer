@@ -56,9 +56,11 @@ public class JwtValidationFilter extends OncePerRequestFilter{
 				authToken.setDetails(new WebAuthenticationDetails(request));
 
 				SecurityContextHolder.getContext().setAuthentication(authToken);
+				System.out.printf("%s user was authenticated \n", username);
 			}
+			
 		}
-		System.out.printf("%s user was authenticated \n", username);
+		
 		filterChain.doFilter(request, response);
 	}
 

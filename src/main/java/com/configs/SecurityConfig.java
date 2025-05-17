@@ -52,7 +52,9 @@ public class SecurityConfig {
 			request.requestMatchers("/api/studyApp/auth/login").permitAll();
 			request.requestMatchers(HttpMethod.POST, "/api/studyApp/account").permitAll();
 			request.requestMatchers("/ws-studyApp").permitAll();
+			request.requestMatchers(HttpMethod.GET, "/api/studyApp/group").permitAll();
 			request.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+			request.requestMatchers(HttpMethod.GET, "/api/docs", "/api/swagger-ui/**", "/v3/api-docs/**").permitAll();
 			request.anyRequest().authenticated();
 		})
 		.sessionManagement(management->{

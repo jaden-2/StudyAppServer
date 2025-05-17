@@ -27,8 +27,8 @@ public class MessageService {
 	 * Get all messages for a group
 	 * @Returns: List<Message>
 	 * @Throws: NoSuchElementException, group does not exist*/
-	public List<Message> getMessagesByGroup(String groupId)throws NoSuchElementException{
-		return repo.findByGroupGroupId(groupId).orElseThrow(()-> new NoSuchElementException("Group does not exist"));
+	public List<Message> getMessagesByGroup(Integer session)throws NoSuchElementException{
+		return repo.findBySessionSessionId(session).orElseThrow(()-> new NoSuchElementException("Group does not exist"));
 	}
 	
 	/*
@@ -51,7 +51,7 @@ public class MessageService {
 		message.setContent(updatedMessage.getContent());
 		message.setCreatedAt(updatedMessage.getCreatedAt());
 		
-		if(message.getGroup() != updatedMessage.getGroup())
+		if(message.getSession() != updatedMessage.getSession())
 			throw new InvalidOperationException("Cannot perform operation");
 		repo.save(message);
 		
@@ -66,7 +66,7 @@ public class MessageService {
 	public void deleteMessage(Integer messageId, String groupId) throws NoSuchElementException, InvalidOperationException {
 		Message msg = repo.findById(messageId).orElseThrow(()-> new NoSuchElementException("Message does not exist"));
 		
-		if(msg.getGroup().getGroupId() != groupId)
+		if(msg.getSession().getGroupId() != groupId)
 			throw new InvalidOperationException("Cannot perform this operation");
 		
 		repo.delete(msg);
@@ -79,7 +79,7 @@ public class MessageService {
 	 * @Throws: InvalidOperationException, cannot delete a message that belongs to another group*/
 	public void deleteMessage(Message message) throws NoSuchElementException, InvalidOperationException{
 		Message msg = repo.findById(message.getMessageId()).orElseThrow(()-> new NoSuchElementException("Message does not exist"));
-		if(msg.getGroup() != message.getGroup())
+		if(msg.getSession() != message.getSession())
 			throw new InvalidOperationException("Cannot perform this operation");
 		
 		repo.delete(msg);

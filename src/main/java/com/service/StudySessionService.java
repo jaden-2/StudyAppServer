@@ -38,4 +38,8 @@ public class StudySessionService {
 	public StudySession getSession(Integer sessionId) {
 		return repo.findById(sessionId).orElseThrow(()-> new NoSuchElementException("Session does not exist"));
 	}
+	
+	public StudySession getByGroudId(String groudId) {
+		return repo.findByGroupId(groudId).orElseThrow();
+	}
 }

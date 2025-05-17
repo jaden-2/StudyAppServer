@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.DTO.UserRequest;
+import com.DTOS.UserRequest;
 import com.entities.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

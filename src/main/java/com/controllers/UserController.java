@@ -1,5 +1,6 @@
 package com.controllers;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +12,20 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DTO.ServerResponse;
-import com.DTO.StudySessionDTO;
-import com.DTO.UserRequest;
-import com.DTO.UserResponse;
+import com.DTOS.MessageResposeDTO;
+import com.DTOS.ServerResponse;
+import com.DTOS.StudySessionDTO;
+import com.DTOS.UserRequest;
+import com.DTOS.UserResponse;
 import com.entities.CustomUserDetails;
 import com.entities.StudySession;
+import com.service.StudySessionService;
 import com.service.UserService;
 
 import jakarta.validation.Valid;
@@ -31,6 +36,9 @@ import jakarta.validation.Valid;
 public class UserController {
 	@Autowired
 	private UserService service;
+	
+	@Autowired 
+	private StudySessionService sessionService;
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;// used to send message to group when user joins/leaves
 	
@@ -64,17 +72,20 @@ public class UserController {
 		return ResponseEntity.accepted().body(new ServerResponse("Account deleted"));
 	}
 	@PutMapping(path = "/group")
-	public ResponseEntity<StudySession> joinGroup(@Valid @RequestBody StudySession group, @AuthenticationPrincipal CustomUserDetails authUser){
-		ServerResponse message = new ServerResponse(authUser.getUsername() + " joined group");
-		messagingTemplate.convertAndSend("/topic/group/"+group.getGroupId(), message);
-		
-		return ResponseEntity.accepted().body(service.joinGroup(authUser, group));
+	public ResponseEntity<StudySessionDTO> joinGroup(@RequestParam("group") String groupId, @AuthenticationPrincipal CustomUserDetails authUser){
+		System.out.println(groupId);
+		StudySession group = sessionService.getByGroudId(groupId);
+		ResponseEntity<StudySessionDTO> response = ResponseEntity.accepted().body(service.joinGroup(authUser, group));
+		MessageResposeDTO message = createServerMessage(authUser.getUsername(), "joined group");
+		messagingTemplate.convertAndSend("/sock/studyApp/topic/"+groupId, message);
+		return response;
 	}
 	
 	@DeleteMapping(path = "/group")
-	public ResponseEntity<Void> leaveGroup(@AuthenticationPrincipal CustomUserDetails authUser, @Valid @RequestBody StudySession group){
-		service.leaveGroup(authUser, group);
-		ServerResponse message = new ServerResponse(authUser.getUsername() + " left group");
+	public ResponseEntity<Void> leaveGroup(@AuthenticationPrincipal CustomUserDetails authUser, @Valid @RequestBody StudySessionDTO group){
+		service.leaveGroup(authUser, new StudySession(group));
+		MessageResposeDTO message = createServerMessage(authUser.getUsername(), "left group");
+		
 		messagingTemplate.convertAndSend("/topic/group/"+group.getGroupId(), message);
 		
 		return ResponseEntity.noContent().build();
@@ -83,5 +94,10 @@ public class UserController {
 	public ResponseEntity<Set<StudySessionDTO>> getUserStudyGroups(@AuthenticationPrincipal CustomUserDetails authUser){
 		return ResponseEntity.ok(service.getGroups(authUser));
 	}
+	
+	protected static MessageResposeDTO createServerMessage(String username, String content) {
+		return new MessageResposeDTO(username+ " "+ content, "Study App", LocalDateTime.now());
+	}
+	
 	
 }
