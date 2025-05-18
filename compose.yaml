@@ -13,37 +13,46 @@ services:
       context: .
     ports:
       - 9000:9000
-
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker-compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
-
+    image: study-app-api
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/study-app
+      - SPRING_DATASOURCE_USERNAME=StudyApp
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DB_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+    restart: on-failure
+  db:
+    image: mysql:8.0
+    ports:
+      - 3390:3306
+    # The default MySQL port is 3306, but we are mapping it to 3390 for this example.
+    # You can change this to 3306 if you want to use the default port.
+   
+    environment:
+      MYSQL_DATABASE: study-app
+      MYSQL_USER: StudyApp
+      MYSQL_PASSWORD: ${SPRING_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SPRING_DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${SPRING_DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  client:
+    build:
+      context: ../../React App/studyapp  # Adjust path to your Next.js project directory
+      dockerfile: Dockerfile # (optional if named Dockerfile)
+    ports:
+      - 3000:3000
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:9000/api/studyApp
+      NEXT_PUBLIC_API_SOCKET: ws://localhost:9000/ws-studyApp
+    restart: unless-stopped
+volumes:
+  mysql_data:

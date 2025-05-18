@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 		registry.addEndpoint("ws-studyApp")
 				.setAllowedOriginPatterns("*")
 				.addInterceptors(new StompHandshakeInterceptor(jwtService, userServiceDetails))
-				.setAllowedOrigins("http://localhost:3000");
+				.setAllowedOrigins("http://127.0.0.1:3000", "http://localhost:3000");
 			
 		WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
 	}
