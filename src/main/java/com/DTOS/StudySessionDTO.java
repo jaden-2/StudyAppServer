@@ -2,7 +2,6 @@ package com.DTOS;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.entities.Message;
 import com.entities.StudySession;
 
 import jakarta.validation.constraints.NotBlank;

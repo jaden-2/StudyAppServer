@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DTOS.MessageResposeDTO;
-import com.DTOS.ServerResponse;
 import com.DTOS.StudySessionDTO;
 import com.entities.CustomUserDetails;
 import com.entities.StudySession;

@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 import com.DTOS.MessageDTO;
 import com.DTOS.MessageResposeDTO;
-import com.entities.CustomUserDetails;
 import com.entities.Message;
 import com.entities.User;
 import com.service.MessageService;

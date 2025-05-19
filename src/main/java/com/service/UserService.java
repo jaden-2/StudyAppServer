@@ -13,7 +13,6 @@ import com.DTOS.StudySessionDTO;
 import com.DTOS.UserRequest;
 import com.DTOS.UserResponse;
 import com.entities.CustomUserDetails;
-import com.entities.Message;
 import com.entities.StudySession;
 import com.entities.User;
 import com.repository.UserRepo;
