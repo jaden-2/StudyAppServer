@@ -1,8 +1,10 @@
 package com.configs;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,6 +37,8 @@ public class SecurityConfig {
 	
 	@Autowired
 	private ExceptionHandler exceptionHandler;
+	@Value("${cors.allowed-origins}")
+	List<String> allowedOrigins;
 	
     @Bean
     SecurityFilterChain securityFilterChainConfig(HttpSecurity http, AuthenticationConfiguration config) throws Exception {
@@ -69,7 +73,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource configurationSource() {
   	  CorsConfiguration config = new CorsConfiguration();
-  	  config.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000", "http://localhost:3000/"));
+  	  config.setAllowedOrigins(allowedOrigins);
   	  config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
   	  config.setAllowedHeaders(Arrays.asList("*"));
   	  config.setAllowCredentials(true);

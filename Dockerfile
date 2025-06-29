@@ -89,4 +89,4 @@ COPY --from=extract build/target/extracted/application/ ./
 
 EXPOSE 9000
 
-ENTRYPOINT [ "java", "org.springframework.boot.loader.launch.JarLauncher" ]
+ENTRYPOINT [ "java", "org.springframework.boot.loader.launch.JarLauncher", "-jar", "/app.jar"]

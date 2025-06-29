@@ -17,12 +17,12 @@ services:
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/study-app
-      - SPRING_DATASOURCE_USERNAME=StudyApp
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DB_PASSWORD}
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - DB_url=jdbc:mysql://db:3306/study-app
+      - DB_username=StudyApp
+      - DB_password=${SPRING_DB_PASSWORD}
+      - DB_dialect=org.hibernate.dialect.MySQLDialect
+      - DB_driver_class=com.mysql.cj.jdbc.Driver
+      - ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
     restart: on-failure
   db:
     image: mysql:8.0

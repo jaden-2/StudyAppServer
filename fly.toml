@@ -1,0 +1,56 @@
+# fly.toml app configuration file generated for study-app-api on 2025-06-06T06:45:38+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'study-app-api'
+primary_region = 'fra'
+
+[build]
+
+[http_service]
+  internal_port = 9000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  
+[[services]]
+  internal_port = 9000
+  protocol = "tcp"
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["http", "tls"]
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+
+  [[services.http_checks]]
+    interval = "15s"
+    timeout = "2s"
+    method = "get"
+    path = "/actuator/health"  # Or whatever health check path you're using
+    protocol = "http"
+
+  [[services.http_options]]
+    [services.http_options.headers]
+      # Let Fly know this service supports WebSocket upgrades
+      "Connection" = "upgrade"
+      "Upgrade" = "websocket"
